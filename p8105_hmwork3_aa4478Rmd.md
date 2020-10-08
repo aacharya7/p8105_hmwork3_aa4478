@@ -97,3 +97,30 @@ instacart %>%
     ##  - attr(*, "class")= chr [1:2] "theme" "gg"
     ##  - attr(*, "complete")= logi FALSE
     ##  - attr(*, "validate")= logi TRUE
+
+Making a table
+
+``` r
+instacart %>% 
+  filter(aisle %in% c("baking ingredients","dog food care","packaged vegetables fruits")) %>%
+  group_by(aisle) %>%
+  count(product_name) %>%
+  mutate(rank = min_rank(desc(n))) %>%
+  filter(rank < 4) %>%
+  arrange(aisle,rank) %>%
+  knitr::kable()
+```
+
+| aisle                      | product\_name                                 |    n | rank |
+| :------------------------- | :-------------------------------------------- | ---: | ---: |
+| baking ingredients         | Light Brown Sugar                             |  499 |    1 |
+| baking ingredients         | Pure Baking Soda                              |  387 |    2 |
+| baking ingredients         | Cane Sugar                                    |  336 |    3 |
+| dog food care              | Snack Sticks Chicken & Rice Recipe Dog Treats |   30 |    1 |
+| dog food care              | Organix Chicken & Brown Rice Recipe           |   28 |    2 |
+| dog food care              | Small Dog Biscuits                            |   26 |    3 |
+| packaged vegetables fruits | Organic Baby Spinach                          | 9784 |    1 |
+| packaged vegetables fruits | Organic Raspberries                           | 5546 |    2 |
+| packaged vegetables fruits | Organic Blueberries                           | 4966 |    3 |
+
+\`\`\`

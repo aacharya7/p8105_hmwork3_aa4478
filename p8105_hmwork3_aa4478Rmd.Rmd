@@ -37,4 +37,16 @@ instacart %>%
   geom_point()
   theme(axis.text.x = element_text(angle = 270, vjust = 0.5, hjust = 1 ))
 ```
+Making a table 
+```{r}
+instacart %>% 
+  filter(aisle %in% c("baking ingredients","dog food care","packaged vegetables fruits")) %>%
+  group_by(aisle) %>%
+  count(product_name) %>%
+  mutate(rank = min_rank(desc(n))) %>%
+  filter(rank < 4) %>%
+  arrange(aisle,rank) %>%
+  knitr::kable()
+```
 
+```
