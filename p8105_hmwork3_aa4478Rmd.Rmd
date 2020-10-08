@@ -3,3 +3,38 @@ title: "Homework 3"
 Author: Ayeshra Acharya 
 output: github_document
 ---
+
+```{r}
+library(tidyverse)
+library(p8105.datasets)
+```
+
+##Problem 1 
+```{r}
+data('instacart')
+```
+
+The `instacart` dataset contains `r nrow(instacart)` observations (representing products from orders) and `r ncol(instacart)` variables. The key variables in the `instacart` dataset include `reordered`, which describes if this product has been ordered by this user in the past,`order_dow`, which describes the day in which the order was placed, and `order_hour_of_day`, the hour of the day on which the order was placed. There are also item variables - name, aisle, department, and some numeric codes. 
+
+How many aisles and which are most items from?
+```{r}
+instacart %>%
+  count(aisle)%>%
+  arrange(desc(n))
+```
+The aisles that the most items are ordered from are "fresh vegetables" (150609 orders) and "fresh fruit" (150473 orders).
+
+Making a plot 
+```{r}
+instacart %>%
+  count(aisle) %>%
+  filter (n>1000) %>%
+  mutate(
+    aisle = factor(aisle),
+    aisle = fct_reorder(aisle,n)
+  ) %>%
+  ggplot(aes(x=aisle,y=n)) +
+  geom_point()
+  theme(axis.text.x = element_text(angle = 270, vjust = 0.5, hjust = 1 ))
+```
+
