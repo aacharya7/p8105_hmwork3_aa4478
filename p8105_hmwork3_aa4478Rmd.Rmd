@@ -121,6 +121,46 @@ accel_plot
 ```
 Similar to the previous plot, we can see here that the average activity for Monday was very low, and increased throughout the week. However, from this plot we also notice that the average activity for Saturday and Sunday were high and then decreased throughout the week. 
 
+##Problem 3 
+Do some data cleaning. Create separate variables for year, month, and day. Ensure observations for temperature, precipitation, and snowfall are given in reasonable units. 
+
+```{r}
+noa_data = 
+  read_csv("./data/nynoaadat.csv", col_names = TRUE) %>%
+  janitor::clean_names() %>%
+  separate(date,c("year","month","day"),sep = "-") %>% 
+  mutate(tmax = as.double(tmax) / 10, 
+         tmin = as.double(tmin) / 10, 
+         prcp = prcp / 10,
+         month = month.name[as.integer(month)], 
+         year = as.integer(year))
+```
+The `noa_data` dataset that we are using comes from The National Oceanic and Atmospheric Association(NOAA) and it provides us with summary statistics from weather stations in New York state. The `noa_data` dataset contains `r nrow(noa_data)` observations and `r ncol(noa_data)` columns. The key variables in this dataset are: date, tmax, tmin, prcp and snow, indicating date, maximum temperature, precipitation, and snowfall. The variables prcp, snow, snwd, tmax, and tmin have missing data. Specifically, prcp is missing 145838 values, snow is missing 381221 values, snwd is missing 591786 values, tmax is missing 1134358 values, and tmin is missing 1134420 values. Missing data does seem to be a significant issue in this dataset because of the number of values missing. 
+
+For snowfall, what are the most commonly observed values? Why?
+```{r}
+noa_data %>% 
+  group_by(snow) %>% 
+  summarize(number_time_snow = n()) %>% 
+  arrange(min_rank(desc(number_time_snow)))
+noa_data %>% 
+  group_by(snow, month) %>% 
+  summarize(number_time_snow = n()) %>% 
+  arrange(min_rank(desc(number_time_snow)))
+```
+For snowfall, the most commonly observed values are 0 and 25. This is interesting because most of the days out of the year, there is not snowfall - but, some days in the winter months experience heavy snow. 
+
+
+
+
+
+
+
+Make a two-panel plot showing the average max temperature in January and in July in each station across years. Is there any observable / interpretable structure? Any outliers?
+Make a two-panel plot showing (i) tmax vs tmin for the full dataset (note that a scatterplot may not be the best option); and (ii) make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
+
+
+
 
 
 
