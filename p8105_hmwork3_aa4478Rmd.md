@@ -498,7 +498,7 @@ interesting because most of the days out of the year, there is not
 snowfall - but, some days in the winter months experience heavy snow
 generally.
 
-## Two panel plot showing the average max temperature in January and in July in each station across years.
+## Two panel plot showing the average max temperature in January and in July in each station across the years.
 
 ``` r
 noa_data %>% 
