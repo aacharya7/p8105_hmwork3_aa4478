@@ -18,6 +18,7 @@ library(tidyverse)
 
 ``` r
 library(p8105.datasets)
+library(patchwork)
 ```
 
 \#\#Problem 1
@@ -384,3 +385,175 @@ Similar to the previous plot, we can see here that the average activity
 for Monday was very low, and increased throughout the week. However,
 from this plot we also notice that the average activity for Saturday and
 Sunday were high and then decreased throughout the week.
+
+\#\#Problem 3
+
+``` r
+library(tidyverse)
+library(ggplot2)
+library(ggridges)
+library(patchwork)
+library(hexbin)
+```
+
+``` r
+noa_data = 
+  read_csv("./data/nynoaadat.csv", col_names = TRUE) %>%
+  janitor::clean_names() %>%
+  separate(date,c("year","month","day"),sep = "-") %>% 
+  mutate(tmax = as.double(tmax) / 10, 
+         tmin = as.double(tmin) / 10, 
+         prcp = prcp / 10,
+         month = month.name[as.integer(month)], 
+         year = as.integer(year))
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   id = col_character(),
+    ##   date = col_date(format = ""),
+    ##   prcp = col_double(),
+    ##   snow = col_double(),
+    ##   snwd = col_double(),
+    ##   tmax = col_logical(),
+    ##   tmin = col_logical()
+    ## )
+
+    ## Warning: 2870416 parsing failures.
+    ##    row  col           expected actual                   file
+    ## 294144 tmax 1/0/T/F/TRUE/FALSE   -56  './data/nynoaadat.csv'
+    ## 294145 tmax 1/0/T/F/TRUE/FALSE   -89  './data/nynoaadat.csv'
+    ## 294146 tmax 1/0/T/F/TRUE/FALSE   -122 './data/nynoaadat.csv'
+    ## 294146 tmin 1/0/T/F/TRUE/FALSE   -206 './data/nynoaadat.csv'
+    ## 294147 tmax 1/0/T/F/TRUE/FALSE   -94  './data/nynoaadat.csv'
+    ## ...... .... .................. ...... ......................
+    ## See problems(...) for more details.
+
+The `noa_data` dataset that we are using comes from The National Oceanic
+and Atmospheric Association(NOAA) and it provides us with summary
+statistics from weather stations in New York state. The `noa_data`
+dataset contains 2,595,176 rows (observations) and 7 columns
+(variables). The key variables in this dataset are: date, tmax, tmin,
+prcp and snow, indicating date, maximum temperature, precipitation, and
+snowfall. The variables prcp, snow, snwd, tmax, and tmin have missing
+data. Specifically, prcp is missing 145838 values, snow is missing
+381221 values, snwd is missing 591786 values, tmax is missing 1134358
+values, and tmin is missing 1134420 values. Missing data does seem to be
+a significant issue in this dataset because of the large number of
+values missing.
+
+For snowfall, what are the most commonly observed values? Why?
+
+``` r
+noa_data %>% 
+  group_by(snow) %>% 
+  summarize(number_time_snow = n()) %>% 
+  arrange(min_rank(desc(number_time_snow)))
+```
+
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
+    ## # A tibble: 282 x 2
+    ##     snow number_time_snow
+    ##    <dbl>            <int>
+    ##  1     0          2008508
+    ##  2    NA           381221
+    ##  3    25            31022
+    ##  4    13            23095
+    ##  5    51            18274
+    ##  6    76            10173
+    ##  7     8             9962
+    ##  8     5             9748
+    ##  9    38             9197
+    ## 10     3             8790
+    ## # … with 272 more rows
+
+``` r
+noa_data %>% 
+  group_by(snow, month) %>% 
+  summarize(number_time_snow = n()) %>% 
+  arrange(min_rank(desc(number_time_snow)))
+```
+
+    ## `summarise()` regrouping output by 'snow' (override with `.groups` argument)
+
+    ## # A tibble: 1,328 x 3
+    ## # Groups:   snow [282]
+    ##     snow month     number_time_snow
+    ##    <dbl> <chr>                <int>
+    ##  1     0 October             195500
+    ##  2     0 May                 192838
+    ##  3     0 August              190704
+    ##  4     0 July                190472
+    ##  5     0 September           187502
+    ##  6     0 June                183908
+    ##  7     0 April               176964
+    ##  8     0 November            164518
+    ##  9     0 March               150688
+    ## 10     0 December            134729
+    ## # … with 1,318 more rows
+
+For snowfall, the most commonly observed values are 0 and 25. This is
+interesting because most of the days out of the year, there is not
+snowfall - but, some days in the winter months experience heavy snow.
+
+## Two panel plot showing the average max temperature in January and in July in each station across years.
+
+``` r
+noa_data %>% 
+  filter(month %in% c("January", "July")) %>% 
+  group_by(year, month) %>% 
+  summarize(avg_temp = mean(tmax, na.rm = TRUE)) %>% 
+  ggplot(aes(x = year, y = avg_temp)) + 
+    geom_line(color = "#7496D2", size = 1) + 
+  facet_grid(~ month, 
+             scales = "free") + 
+  labs(title = "Figure 4: Average maximum temperature (°C) in January and July, 1981-2010", 
+       x = "Year", 
+       y = "Average Daily Temperature (°C)") +
+  theme(axis.text.x = element_text(angle = 45,
+                                   vjust = 0.4), 
+        strip.background = element_rect(fill = "pink"), 
+        strip.text = element_text(color = "black", 
+                                  face = "bold"))
+```
+
+    ## `summarise()` regrouping output by 'year' (override with `.groups` argument)
+
+    ## Warning: Removed 30 row(s) containing missing values (geom_path).
+
+![](p8105_hmwork3_aa4478Rmd_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+The temperatures for the month of January have more variability than for
+the month of July. There are not any outliers, but from the years
+1985-1990, the month of July had low average maximum temperature.
+
+\#\#Make a two-panel plot showing (i) tmax vs tmin for the full dataset
+and make a plot showing the distribution of snowfall values greater than
+0 and less than 100 separately by year.
+
+``` r
+library(patchwork)
+library(hexbin)
+plot_tmax_tmin =
+  noa_data %>% 
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_hex()+
+  labs(title = "tmax vs. tmin", x = "tmin (ºC)", y = "tmax (ºC)") +
+  theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
+
+plot_snow_year = 
+  noa_data %>% 
+  filter(0 < snow & snow < 100) %>%
+  ggplot(aes( x = year, y = snow)) +
+  geom_hex() + 
+  scale_x_discrete(breaks = c("1981","1990","2000","2010")) +
+  labs(title = "Yearly Snowfall", y = "snow fall (mm)")+
+  theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
+plot_tmax_tmin + plot_snow_year
+```
+
+    ## Warning: Removed 2595150 rows containing non-finite values (stat_binhex).
+
+![](p8105_hmwork3_aa4478Rmd_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+
+\`\`\`

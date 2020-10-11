@@ -202,7 +202,3 @@ plot_tmax_tmin + plot_snow_year
 ```
 
 
-```
-
-
-
