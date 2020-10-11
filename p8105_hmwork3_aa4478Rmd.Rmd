@@ -156,7 +156,7 @@ noa_data %>%
   summarize(number_time_snow = n()) %>% 
   arrange(min_rank(desc(number_time_snow)))
 ```
-For snowfall, the most commonly observed values are 0 and 25. This is interesting because most of the days out of the year, there is not snowfall - but, some days in the winter months experience heavy snow. 
+For snowfall, the most commonly observed values are 0 and 25. This is interesting because most of the days out of the year, there is not snowfall - but, some days in the winter months experience heavy snow generally. 
 
 ## Two panel plot showing the average max temperature in January and in July in each station across years. 
 ```{r}
@@ -179,7 +179,7 @@ noa_data %>%
 ```
 The temperatures for the month of January have more variability than for the month of July. There are not any outliers, but from the years 1985-1990, the month of July had low average maximum temperature.
 
-##Make a two-panel plot showing (i) tmax vs tmin for the full dataset and  make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year.
+##Make a two-panel plot showing (i) tmax vs tmin for the full dataset and  make a plot showing the distribution of snowfall values greater than 0 and less than 100 separately by year. 
 ```{r}
 library(patchwork)
 library(hexbin)
@@ -200,5 +200,3 @@ plot_snow_year =
   theme(legend.position = "none", plot.title = element_text(hjust = 0.5))
 plot_tmax_tmin + plot_snow_year
 ```
-
-
