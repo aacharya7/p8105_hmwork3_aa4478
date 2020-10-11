@@ -495,7 +495,8 @@ noa_data %>%
 
 For snowfall, the most commonly observed values are 0 and 25. This is
 interesting because most of the days out of the year, there is not
-snowfall - but, some days in the winter months experience heavy snow.
+snowfall - but, some days in the winter months experience heavy snow
+generally.
 
 ## Two panel plot showing the average max temperature in January and in July in each station across years.
 
@@ -555,5 +556,3 @@ plot_tmax_tmin + plot_snow_year
     ## Warning: Removed 2595150 rows containing non-finite values (stat_binhex).
 
 ![](p8105_hmwork3_aa4478Rmd_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
-
-\`\`\`
